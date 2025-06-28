@@ -7,8 +7,8 @@
 ### 1.2. 设计目标  
 1. 完整实现Y86指令集的核心功能  
 2. 采用经典的5级流水线架构（取指、译码、执行、访存、写回）  
-3. 支持数据转发（forwarding）等冒险处理机制  
-4. 实现条件码（CC）和条件执行功能  
+3. 支持数据转发等冒险处理机制  
+4. 实现条件码和条件执行功能  
 5. 提供基本的异常处理能力  
 
 ### 1.3. 文档结构  
@@ -105,7 +105,8 @@ Y86处理器中程序员可见的状态如下：
 ### 4.1. 转发（Forwarding）  
 解决**数据冒险**（写操作晚于读操作）：  
 ```verilog
-always @(*) begin
+always @(*)
+begin
   if (d_srcB == e_dstE)
     d_valB = e_valE;
   else if (d_srcB == M_dstM)
@@ -170,7 +171,8 @@ $CPI = 1.0 + \frac{C_b}{C_i} = 1.0 + lp + mp + rp$
 ### 5.2. 合并信号  
 减少流水线寄存器状态：  
 ```verilog
-always @(*) begin
+always @(*)
+begin
   if (D_icode == ICALL || D_icode == IJXX)
     d_valA = D_valP;  // 合并 valP 到 valA
   else

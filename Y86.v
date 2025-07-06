@@ -1,6 +1,6 @@
 module IMEM (
-    input wire [63:0] addr,
-    output reg [79:0] data
+    input  [63:0] addr,
+    output [79:0] data
 );
     reg [7:0] M [0:255]; // 2 ^ 64 - 1
 
@@ -125,34 +125,31 @@ module IMEM (
 		end
 	end
     
-    always @(*)
-    begin
-        data = {
-			M[addr + 9],
-			M[addr + 8],
-			M[addr + 7],
-			M[addr + 6],
-			M[addr + 5],
-			M[addr + 4],
-			M[addr + 3],
-			M[addr + 2],
-			M[addr + 1],
-			M[addr + 0]
-		};
-    end
+    assign data = {
+		M[addr + 9],
+		M[addr + 8],
+		M[addr + 7],
+		M[addr + 6],
+		M[addr + 5],
+		M[addr + 4],
+		M[addr + 3],
+		M[addr + 2],
+		M[addr + 1],
+		M[addr + 0]
+	};
 endmodule
 
 module DMEM(
-	input CLK,
-	input read,
-	input write,
-	input [63:0] addr,
-	input [63:0] data,
+	input  CLK,
+	input  read,
+	input  write,
+	input  [63:0] addr,
+	input  [63:0] data,
 	output [63:0] valM
 );
-	reg [7:0] M [0:255]; // 2 ^ 64 - 1
-	reg [7:0] Cache [0:15];
-	reg [3:0] seq;
+	reg  [7:0] M     [0:255]; // 2 ^ 64 - 1
+	reg  [7:0] Cache [0:15];
+	reg  [3:0] seq;
 	wire [3:0] seq_t;
 	wire [3:0] iaddr;
 	
@@ -180,7 +177,7 @@ module DMEM(
 				Cache[4'he] <= M[{seq_t, 4'he}];
 				Cache[4'hf] <= M[{seq_t, 4'hf}];
 			end
-        	end
+        end
 		if (write) begin
 			if (seq_t == seq) begin
 				Cache[iaddr + 0] <= data[7:0];       
@@ -289,33 +286,33 @@ endmodule
 module Y86(
 	input CLK,
 	input reset,
-	output reg  [63:0] F_predPC,
-	output reg  [3:0]  D_icode,
-	output reg  [3:0]  D_ifun,
-	output reg  [3:0]  D_rA,
-	output reg  [3:0]  D_rB,
-	output reg  [63:0] D_valC,
-	output reg  [63:0] D_valP,
-	output reg  [3:0]  E_icode,
-	output reg  [3:0]  E_ifun,
-	output reg  [63:0] E_valC,
-	output reg  [63:0] E_valA,
-	output reg  [63:0] E_valB,
-	output reg  [3:0]  E_dstE,
-	output reg  [3:0]  E_dstM,
-	output reg  [3:0]  M_icode,
-	output reg         M_Cnd,
-	output reg  [63:0] M_valE,
-	output reg  [63:0] M_valA,
-	output reg [63:0] M_valC,
-	output reg  [3:0]  M_dstE,
-	output reg  [3:0]  M_dstM,
-	output reg  [3:0]  W_icode,
-	output reg         W_Cnd,
-	output reg  [63:0] W_valE,
-	output reg  [63:0] W_valM,
-	output reg  [3:0]  W_dstE,
-	output reg  [3:0]  W_dstM,
+	output reg	[63:0]	F_predPC,
+	output reg	[3:0]	D_icode,
+	output reg	[3:0]	D_ifun,
+	output reg	[3:0]	D_rA,
+	output reg	[3:0]	D_rB,
+	output reg	[63:0]	D_valC,
+	output reg	[63:0]	D_valP,
+	output reg	[3:0]	E_icode,
+	output reg	[3:0]	E_ifun,
+	output reg	[63:0]	E_valC,
+	output reg	[63:0]	E_valA,
+	output reg	[63:0]	E_valB,
+	output reg	[3:0]	E_dstE,
+	output reg	[3:0]	E_dstM,
+	output reg	[3:0]	M_icode,
+	output reg			M_Cnd,
+	output reg	[63:0]	M_valE,
+	output reg	[63:0]	M_valA,
+	output reg	[63:0]	M_valC,
+	output reg	[3:0]	M_dstE,
+	output reg	[3:0]	M_dstM,
+	output reg	[3:0]	W_icode,
+	output reg			W_Cnd,
+	output reg	[63:0]	W_valE,
+	output reg	[63:0]	W_valM,
+	output reg	[3:0]	W_dstE,
+	output reg	[3:0]	W_dstM,
 	output [1:0] Stat
 );
 
@@ -338,6 +335,8 @@ module Y86(
 	parameter RRSP    = 4'h4;
 	parameter RNONE   = 4'hF;
 
+	parameter ALUADD  = 4'h0;
+
 	parameter SAOK    = 2'h0;
 	parameter SHLT    = 2'h1;
 	parameter SADR    = 2'h2;
@@ -351,10 +350,10 @@ module Y86(
 	wire D_stall;
 	wire D_bubble;
 	reg  [1:0]  D_stat;
-	//reg  [3:0]  D_icode;
-	//reg  [3:0]  D_ifun;
-	//reg  [3:0]  D_rA;
-	//reg  [3:0]  D_rB;
+//	reg  [3:0]  D_icode;
+//	reg  [3:0]  D_ifun;
+//	reg  [3:0]  D_rA;
+//	reg  [3:0]  D_rB;
 //	reg  [63:0] D_valC;
 //	reg  [63:0] D_valP;
 	
@@ -376,7 +375,7 @@ module Y86(
 //	reg         M_Cnd;
 //	reg  [63:0] M_valE;
 //	reg  [63:0] M_valA;
-//	reg [63:0] M_valC;
+//	reg  [63:0] M_valC;
 //	reg  [3:0]  M_dstE;
 //	reg  [3:0]  M_dstM;
 	
@@ -389,7 +388,7 @@ module Y86(
 //	reg  [63:0] W_valM;
 //	reg  [3:0]  W_dstE;
 //	reg  [3:0]  W_dstM;
-//    reg W_Cnd;
+//	reg W_Cnd;
 	
 	// fetch
 	wire [79:0] f_ins;
@@ -431,7 +430,6 @@ module Y86(
 	reg e_Cnd;
 
 	// memory
-	wire ret_pred_error;
 	wire mem_read;
 	wire mem_write;
 	wire [63:0] mem_addr;
@@ -464,6 +462,12 @@ module Y86(
 		.valM(m_valM)
 	);
 	
+	// pipeline control logic
+	wire load_use_hazard = (E_icode == IMRMOVQ || E_icode == IPOPQ) && (E_dstM != RNONE) && (E_dstM == d_srcA || E_dstM == d_srcB);
+	wire brunch_pred_err = E_icode == IJXX && !e_Cnd;
+	wire return_pred_err = M_icode == IRET && M_valC != m_valM;
+	wire pipeline_except = (m_stat != SAOK) || (W_stat != SAOK);
+
 	/* fetch */
 
 	always @ (posedge CLK or posedge reset)
@@ -530,9 +534,9 @@ module Y86(
 	// Select PC
 	always @ (*)
 	begin
-        if (M_icode == IJXX && !M_Cnd)	// Mispredicted branch
+        if (M_icode == IJXX && !M_Cnd)
             f_pc = M_valA;
-        else if (W_icode == IRET && W_Cnd)	// RET
+        else if (W_icode == IRET && W_Cnd)
             f_pc = W_valM;
         else
             f_pc = F_predPC;
@@ -550,7 +554,7 @@ module Y86(
 	end
 	
 	// update F
-	assign F_stall = ((E_icode == IMRMOVQ || E_icode == IPOPQ) && (E_dstM == d_srcA || E_dstM == d_srcB)) || Stat != SAOK;
+	assign F_stall = load_use_hazard && !return_pred_err || Stat != SAOK;
 	always @ (posedge CLK or posedge reset)
 	begin
         if (reset)
@@ -604,8 +608,8 @@ module Y86(
 	end
 	
 	// update D
-	assign D_stall = (E_icode == IMRMOVQ || E_icode == IPOPQ) && (E_dstM == d_srcA || E_dstM == d_srcB) && !ret_pred_error; // LUH && !RPE
-	assign D_bubble = (E_icode == IJXX && !e_Cnd) || ret_pred_error; // RPE || BPE
+	assign D_stall = load_use_hazard && !return_pred_err;
+	assign D_bubble = brunch_pred_err || return_pred_err;
 	always @ (posedge CLK or posedge reset)
 	begin
         if (reset) begin
@@ -638,7 +642,8 @@ module Y86(
 	assign d_rvalA = (d_srcA == RNONE) ? 64'h0 : R[d_srcA];
 	assign d_rvalB = (d_srcB == RNONE) ? 64'h0 : R[d_srcB];
 	
-	always @ (posedge CLK or posedge reset) begin
+	always @ (posedge CLK or posedge reset)
+	begin
         if (reset) begin
             R[4'h0] <= 64'h0;
             R[4'h1] <= 64'h0;
@@ -755,7 +760,7 @@ module Y86(
 	end
 	
 	// update E
-	assign E_bubble = (E_icode == IMRMOVQ || E_icode == IPOPQ) && (E_dstM == d_srcA || E_dstM == d_srcB) || (E_icode == IJXX && !e_Cnd) || ret_pred_error;
+	assign E_bubble = load_use_hazard || brunch_pred_err || return_pred_err;
 	always @ (posedge CLK or posedge reset)
 	begin
         if (reset) begin
@@ -816,11 +821,12 @@ module Y86(
 	end
 	
 	// ALU fun
-	always @ (*) begin
+	always @ (*)
+	begin
 		if (E_icode == IOPQ)
 			alufun = E_ifun;
 		else
-			alufun = 4'h0;
+			alufun = ALUADD;
 	end
 	
 	// ALU
@@ -835,7 +841,7 @@ module Y86(
 		endcase
 	end
 	
-	assign set_cc = (E_icode == IOPQ) && (m_stat == SAOK) && (W_stat == SAOK);	// Set CC
+	assign set_cc = (E_icode == IOPQ) && !pipeline_except && !return_pred_err;	// Set CC
 	
 	always @ (posedge CLK or posedge reset)	// CC
 	begin
@@ -847,7 +853,7 @@ module Y86(
 		else if (set_cc) begin
 			ZF <= ~|e_valE;
 			SF <= e_valE[63];
-			OF <= !(alufun == 4'h0 && aluA[63] == aluB[63] && aluA[63] ^ e_valE[63] || alufun == 4'h1 && aluA[63] ^ aluB[63] && aluA[63] == e_valE[63]);
+			OF <= !(alufun == ALUADD && aluA[63] == aluB[63] && aluA[63] ^ e_valE[63] || alufun == 4'h1 && aluA[63] ^ aluB[63] && aluA[63] == e_valE[63]);
 		end
 	end
 	
@@ -875,7 +881,7 @@ module Y86(
 	end
 	
 	// update M
-	assign M_bubble = (m_stat != SAOK) || (W_stat != SAOK) || ret_pred_error;
+	assign M_bubble = pipeline_except || return_pred_err;
 	always @ (posedge CLK or posedge reset)
 	begin
         if (reset) begin
@@ -911,8 +917,6 @@ module Y86(
 	
 	/* memory */
 	
-	assign ret_pred_error = (M_icode == IRET && M_valC != m_valM);
-	
 	assign mem_read  = (M_icode == IMRMOVQ || M_icode == IRET || M_icode == IPOPQ);
 	assign mem_write = (M_icode == IRMMOVQ || M_icode == ICALL || M_icode == IPUSHQ);
 	assign mem_addr  = (M_icode == IRET || M_icode == IPOPQ) ? M_valA : M_valE;
@@ -946,7 +950,7 @@ module Y86(
 			;
 		else
 		begin
-			W_Cnd 	<= ret_pred_error;
+			W_Cnd 	<= return_pred_err;
 			W_stat  <= m_stat;
 			W_icode <= M_icode;
 			W_valE  <= M_valE;

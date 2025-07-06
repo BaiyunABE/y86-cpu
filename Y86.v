@@ -1,8 +1,8 @@
 module IMEM (
-    input  [63:0] addr,
-    output [79:0] data
+	input  [63:0] addr,
+	output [79:0] data
 );
-    reg [7:0] M [0:255]; // 2 ^ 64 - 1
+	reg [7:0] M [0:255]; // 2 ^ 64 - 1
 
 	integer i;
 	initial begin
@@ -124,8 +124,8 @@ module IMEM (
 			M[i] = 8'h00;
 		end
 	end
-    
-    assign data = {
+	
+	assign data = {
 		M[addr + 9],
 		M[addr + 8],
 		M[addr + 7],
@@ -147,7 +147,7 @@ module DMEM(
 	input  [63:0] data,
 	output [63:0] valM
 );
-	reg  [7:0] M     [0:255]; // 2 ^ 64 - 1
+	reg  [7:0] M	 [0:255]; // 2 ^ 64 - 1
 	reg  [7:0] Cache [0:15];
 	reg  [3:0] seq;
 	wire [3:0] seq_t;
@@ -177,17 +177,17 @@ module DMEM(
 				Cache[4'he] <= M[{seq_t, 4'he}];
 				Cache[4'hf] <= M[{seq_t, 4'hf}];
 			end
-        end
+		end
 		if (write) begin
 			if (seq_t == seq) begin
-				Cache[iaddr + 0] <= data[7:0];       
-				Cache[iaddr + 1] <= data[15:8];      
-				Cache[iaddr + 2] <= data[23:16];     
-				Cache[iaddr + 3] <= data[31:24];     
-				Cache[iaddr + 4] <= data[39:32];     
-				Cache[iaddr + 5] <= data[47:40];     
-				Cache[iaddr + 6] <= data[55:48];     
-				Cache[iaddr + 7] <= data[63:56];     
+				Cache[iaddr + 0] <= data[7:0];	   
+				Cache[iaddr + 1] <= data[15:8];	  
+				Cache[iaddr + 2] <= data[23:16];	 
+				Cache[iaddr + 3] <= data[31:24];	 
+				Cache[iaddr + 4] <= data[39:32];	 
+				Cache[iaddr + 5] <= data[47:40];	 
+				Cache[iaddr + 6] <= data[55:48];	 
+				Cache[iaddr + 7] <= data[63:56];	 
 			end
 			M[addr + 0] <= data[7:0];
 			M[addr + 1] <= data[15:8];
@@ -201,25 +201,25 @@ module DMEM(
 	end
 	
 	assign valM = read ? (
-        seq_t == seq ? {
-            Cache[iaddr + 7],
-            Cache[iaddr + 6],
-            Cache[iaddr + 5],
-            Cache[iaddr + 4],
-            Cache[iaddr + 3],
-            Cache[iaddr + 2],
-            Cache[iaddr + 1],
-            Cache[iaddr + 0]
-        } : {
-            M[addr + 7],
-            M[addr + 6],
-            M[addr + 5],
-            M[addr + 4],
-            M[addr + 3],
-            M[addr + 2],
-            M[addr + 1],
-            M[addr + 0]
-        }
+		seq_t == seq ? {
+			Cache[iaddr + 7],
+			Cache[iaddr + 6],
+			Cache[iaddr + 5],
+			Cache[iaddr + 4],
+			Cache[iaddr + 3],
+			Cache[iaddr + 2],
+			Cache[iaddr + 1],
+			Cache[iaddr + 0]
+		} : {
+			M[addr + 7],
+			M[addr + 6],
+			M[addr + 5],
+			M[addr + 4],
+			M[addr + 3],
+			M[addr + 2],
+			M[addr + 1],
+			M[addr + 0]
+		}
 	) : 64'h0;
 	
 	integer i;
@@ -316,31 +316,31 @@ module Y86(
 	output [1:0] Stat
 );
 
-	parameter IHALT   = 4'h0;
-	parameter INOP    = 4'h1;
-	parameter IRRMOVQ = 4'h2;
-	parameter ICMOVXX = 4'h2;
-	parameter IIRMOVQ = 4'h3;
-	parameter IRMMOVQ = 4'h4;
-	parameter IMRMOVQ = 4'h5;
-	parameter IOPQ    = 4'h6;
-	parameter IJXX    = 4'h7;
-	parameter ICALL   = 4'h8;
-	parameter IRET    = 4'h9;
-	parameter IPUSHQ  = 4'hA;
-	parameter IPOPQ   = 4'hB;
+	parameter IHALT		= 4'h0;
+	parameter INOP		= 4'h1;
+	parameter IRRMOVQ	= 4'h2;
+	parameter ICMOVXX	= 4'h2;
+	parameter IIRMOVQ	= 4'h3;
+	parameter IRMMOVQ	= 4'h4;
+	parameter IMRMOVQ	= 4'h5;
+	parameter IOPQ		= 4'h6;
+	parameter IJXX		= 4'h7;
+	parameter ICALL		= 4'h8;
+	parameter IRET		= 4'h9;
+	parameter IPUSHQ	= 4'hA;
+	parameter IPOPQ		= 4'hB;
 
-	parameter FNONE   = 4'h0;
+	parameter FNONE		= 4'h0;
 
-	parameter RRSP    = 4'h4;
-	parameter RNONE   = 4'hF;
+	parameter RRSP		= 4'h4;
+	parameter RNONE		= 4'hF;
 
-	parameter ALUADD  = 4'h0;
+	parameter ALUADD	= 4'h0;
 
-	parameter SAOK    = 2'h0;
-	parameter SHLT    = 2'h1;
-	parameter SADR    = 2'h2;
-	parameter SINS    = 2'h3;
+	parameter SAOK		= 2'h0;
+	parameter SHLT		= 2'h1;
+	parameter SADR		= 2'h2;
+	parameter SINS		= 2'h3;
 
 	// F
 	wire F_stall;
@@ -372,7 +372,7 @@ module Y86(
 	wire M_bubble;
 	reg  [1:0]  M_stat;
 //	reg  [3:0]  M_icode;
-//	reg         M_Cnd;
+//	reg		 M_Cnd;
 //	reg  [63:0] M_valE;
 //	reg  [63:0] M_valA;
 //	reg  [63:0] M_valC;
@@ -534,12 +534,12 @@ module Y86(
 	// Select PC
 	always @ (*)
 	begin
-        if (M_icode == IJXX && !M_Cnd)
-            f_pc = M_valA;
-        else if (W_icode == IRET && W_Cnd)
-            f_pc = W_valM;
-        else
-            f_pc = F_predPC;
+		if (M_icode == IJXX && !M_Cnd)
+			f_pc = M_valA;
+		else if (W_icode == IRET && W_Cnd)
+			f_pc = W_valM;
+		else
+			f_pc = F_predPC;
 	end
 	
 	// Predict PC
@@ -557,8 +557,8 @@ module Y86(
 	assign F_stall = load_use_hazard && !return_pred_err || Stat != SAOK;
 	always @ (posedge CLK or posedge reset)
 	begin
-        if (reset)
-            F_predPC <= 64'h0;
+		if (reset)
+			F_predPC <= 64'h0;
 		else if (F_stall)
 			;
 		else
@@ -612,15 +612,15 @@ module Y86(
 	assign D_bubble = brunch_pred_err || return_pred_err;
 	always @ (posedge CLK or posedge reset)
 	begin
-        if (reset) begin
+		if (reset) begin
 			D_stat  <= SAOK;
 			D_icode <= INOP;
 			D_ifun  <= FNONE;
-			D_rA    <= RNONE;
-			D_rB    <= RNONE;
+			D_rA	<= RNONE;
+			D_rB	<= RNONE;
 			D_valC  <= 64'h0;
 			D_valP  <= 64'h0;
-        end
+		end
 		else if (D_stall)
 			;
 		else if (D_bubble)
@@ -630,8 +630,8 @@ module Y86(
 			D_stat  <= f_stat;
 			D_icode <= f_icode;
 			D_ifun  <= f_ifun;
-			D_rA    <= f_rA;
-			D_rB    <= f_rB;
+			D_rA	<= f_rA;
+			D_rB	<= f_rB;
 			D_valC  <= f_valC;
 			D_valP  <= f_valP;
 		end
@@ -644,28 +644,28 @@ module Y86(
 	
 	always @ (posedge CLK or posedge reset)
 	begin
-        if (reset) begin
-            R[4'h0] <= 64'h0;
-            R[4'h1] <= 64'h0;
-            R[4'h2] <= 64'h0;
-            R[4'h3] <= 64'h0;
-            R[4'h4] <= 64'h0;
-            R[4'h5] <= 64'h0;
-            R[4'h6] <= 64'h0;
-            R[4'h7] <= 64'h0;
-            R[4'h8] <= 64'h0;
-            R[4'h9] <= 64'h0;
-            R[4'ha] <= 64'h0;
-            R[4'hb] <= 64'h0;
-            R[4'hc] <= 64'h0;
-            R[4'hd] <= 64'h0;
-            R[4'he] <= 64'h0;
-        end
+		if (reset) begin
+			R[4'h0] <= 64'h0;
+			R[4'h1] <= 64'h0;
+			R[4'h2] <= 64'h0;
+			R[4'h3] <= 64'h0;
+			R[4'h4] <= 64'h0;
+			R[4'h5] <= 64'h0;
+			R[4'h6] <= 64'h0;
+			R[4'h7] <= 64'h0;
+			R[4'h8] <= 64'h0;
+			R[4'h9] <= 64'h0;
+			R[4'ha] <= 64'h0;
+			R[4'hb] <= 64'h0;
+			R[4'hc] <= 64'h0;
+			R[4'hd] <= 64'h0;
+			R[4'he] <= 64'h0;
+		end
 		else begin
-            if (W_dstE != RNONE)
-                R[W_dstE] <= W_valE;
-            if (W_dstM != RNONE)
-                R[W_dstM] <= W_valM;
+			if (W_dstE != RNONE)
+				R[W_dstE] <= W_valE;
+			if (W_dstM != RNONE)
+				R[W_dstM] <= W_valM;
 		end
 	end
 	
@@ -763,7 +763,7 @@ module Y86(
 	assign E_bubble = load_use_hazard || brunch_pred_err || return_pred_err;
 	always @ (posedge CLK or posedge reset)
 	begin
-        if (reset) begin
+		if (reset) begin
 			E_stat  <= SAOK;
 			E_icode <= INOP;
 			E_ifun  <= FNONE;
@@ -772,7 +772,7 @@ module Y86(
 			E_valB  <= 64'h0;
 			E_dstE  <= RNONE;
 			E_dstM  <= RNONE;
-        end
+		end
 		else if (E_bubble)
 		begin
 			E_icode <= INOP;
@@ -845,11 +845,11 @@ module Y86(
 	
 	always @ (posedge CLK or posedge reset)	// CC
 	begin
-        if (reset) begin
-            ZF <= 0;
-            SF <= 0;
-            OF <= 0;
-        end
+		if (reset) begin
+			ZF <= 0;
+			SF <= 0;
+			OF <= 0;
+		end
 		else if (set_cc) begin
 			ZF <= ~|e_valE;
 			SF <= e_valE[63];
@@ -884,7 +884,7 @@ module Y86(
 	assign M_bubble = pipeline_except || return_pred_err;
 	always @ (posedge CLK or posedge reset)
 	begin
-        if (reset) begin
+		if (reset) begin
 			M_stat  <= SAOK;
 			M_icode <= INOP;
 			M_Cnd   <= 0;
@@ -893,7 +893,7 @@ module Y86(
 			M_valC 	<= 64'h0;
 			M_dstE  <= RNONE;
 			M_dstM  <= RNONE;
-        end
+		end
 		else if (M_bubble)
 		begin
 			M_icode <= INOP;
@@ -937,7 +937,7 @@ module Y86(
 	assign W_stall = (W_stat != SAOK);
 	always @ (posedge CLK or posedge reset)
 	begin
-        if (reset) begin
+		if (reset) begin
 			W_Cnd	<= 0;
 			W_stat  <= SAOK;
 			W_icode <= INOP;
@@ -945,7 +945,7 @@ module Y86(
 			W_valM  <= 64'h0;
 			W_dstE  <= RNONE;
 			W_dstM  <= RNONE;
-        end
+		end
 		else if (W_stall)
 			;
 		else
